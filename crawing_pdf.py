@@ -40,27 +40,29 @@ def getFile(url):
     print("Successful to download" + " " + file_name)
 
 
-def main(sem: str):
+def main(sem: str, course_front_num: str, num_start: int, num_end: int, file: str):
     # get tku courses selection system url
     root_url = 'http://ap09.emis.tku.edu.tw/'
 
-    #raw_url = ''
+    os.mkdir(file)
+    os.chdir(os.path.join(os.getcwd(), file))
 
-    #html = getHtml(raw_url)
-    #url_lst = getUrl(html)
+    for count in range(num_start, num_end):
+        if count < 10:
+            count = '0'+str(count)
 
-    os.mkdir('course_pdf')
-    os.chdir(os.path.join(os.getcwd(), 'course_pdf'))
-
-    for count in range(64, 84):
         url = root_url + str(sem) + '/' + str(sem) + \
-            '_31' + str(count) + '.PDF'
+            '_' + course_front_num + str(count) + '.PDF'
         if url == None:
             continue
         getFile(url)
 
 
 if __name__ == '__main__':
-    sem = '111_2'
-    #str(input('enter semester example xxx_1 or xxx_2'))
-    main(sem)
+    sem = str(input('semester: '))
+    course_front_num = str(input('front number: '))
+    start = int(input('start number: '))
+    end = int(input('end number: '))
+    file = str(input('copy in file: '))
+
+    main(sem, course_front_num, start, end, file)

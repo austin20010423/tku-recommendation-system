@@ -3,13 +3,13 @@ import pandas as pd
 import nums_from_string as nfs
 
 
-def read_pdf(file: str):
-    with pdfplumber.open('./course_pdf/111_2_'+file+'.PDF') as pdf:
+def read_pdf(file_name: str, file_num: str):
+    with pdfplumber.open('./'+file_name+'/111_2_'+file_num+'.PDF') as pdf:
 
         first_page = pdf.pages[0]
         tb = first_page.extract_table()
 
-    with pdfplumber.open('./course_pdf/111_2_'+file+'.PDF') as pdf:
+    with pdfplumber.open('./'+file_name+'/111_2_'+file_num+'.PDF') as pdf:
 
         first_page = pdf.pages[2]
         page2 = first_page.extract_table()
@@ -33,13 +33,16 @@ def read_pdf(file: str):
     for teachers in teacher:
         teachers_re += teachers.replace('\n', '')
 
-    course_re = str()
-    for course_re in course_name:
-        course_re += course_name.replace('\n', '')
+    if len(course_name) > 10:
+        course_re = str()
+        for course_re in course_name:
+            course_re += course_name.replace('\n', '')
+        course_name = course_re
 
-    class_re = str()
-    for class_re in classes:
-        class_re += classes.replace('\n', '')
+        class_re = str()
+        for class_re in classes:
+            class_re += classes.replace('\n', '')
+        classes = class_re
 
     number_list = []
     grade = []
@@ -98,16 +101,30 @@ def read_pdf(file: str):
         final = grade[3]
         other = 0
 
-    full_course = [teachers_re, course_re, class_re,
+    full_course = [teachers_re, course_name, classes,
                    attendance, work, mid, final, other]
     return full_course
 
 
-if __name__ == '__main__':
-    course_collect = []
-    for count in range(64, 84):
-        course_collect.append(read_pdf('31'+str(count)))
+def read_out_all(fileName: str, front_num: str, start: int, end: int) -> list:
 
-course_collect = pd.DataFrame(course_collect)
-print(course_collect)
-course_collect.to_csv('out.csv')
+    course_collect = []
+    for count in range(start, end):
+        course_collect.append(read_pdf(fileName, front_num + str(count)))
+
+    return course_collect
+
+
+if __name__ == '__main__':
+
+    course_name = str(input('enter course field: '))
+    front = str(input('enter front_number: '))
+    start = int(input('start number: '))
+    end = int(input('end number: '))
+
+    collected_course = read_out_all(course_name, front, start, end)
+
+    print(collected_course)
+    collected_course = pd.DataFrame(collected_course, columns=[
+        'teacher', 'course_name', 'course_field', 'attendance', 'work', 'midterm', 'final', 'other'])
+    collected_course.to_csv(course_name+'.csv')
