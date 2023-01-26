@@ -106,11 +106,31 @@ def read_pdf(file_name: str, file_num: str):
     return full_course
 
 
-def read_out_all(fileName: str, front_num: str, start: int, end: int) -> list:
+def read_out_all(fileName: str, front_num: str, start: int, end: int, leap: bool) -> list:
 
     course_collect = []
-    for count in range(start, end):
+    flag = 0
+    if leap == True:
+        flag = 1
+        end_f = 99
+    else:
+        end_f = end
+
+    for count in range(start, end_f+1):
+        if count < 10:
+            count = '0'+str(count)
         course_collect.append(read_pdf(fileName, front_num + str(count)))
+
+    course_collect_1 = []
+    front_num = int(front_num)+1
+    front_num = str(front_num)
+    if flag == 1:
+        for count in range(0, end+1):
+            if count < 10:
+                count = '0'+str(count)
+            course_collect_1.append(
+                read_pdf(fileName, front_num + str(count)))
+    course_collect = course_collect + course_collect_1
 
     return course_collect
 
@@ -121,8 +141,8 @@ if __name__ == '__main__':
     front = str(input('enter front_number: '))
     start = int(input('start number: '))
     end = int(input('end number: '))
-
-    collected_course = read_out_all(course_name, front, start, end)
+    if_leap = bool(input('if leap True/False: '))
+    collected_course = read_out_all(course_name, front, start, end, if_leap)
 
     print(collected_course)
     collected_course = pd.DataFrame(collected_course, columns=[

@@ -47,7 +47,7 @@ def main(sem: str, course_front_num: str, num_start: int, num_end: int, file: st
     os.mkdir(file)
     os.chdir(os.path.join(os.getcwd(), file))
 
-    for count in range(num_start, num_end):
+    for count in range(num_start, num_end+1):
         if count < 10:
             count = '0'+str(count)
 
